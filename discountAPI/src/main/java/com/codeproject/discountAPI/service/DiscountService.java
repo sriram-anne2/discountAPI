@@ -18,7 +18,50 @@ import java.util.concurrent.ExecutionException;
 public class DiscountService {
 
 
-    public Discount addNewDiscount(Discount discount) throws ExecutionException, InterruptedException {
+    public String addDiscount(DiscountRawRequest discountRawRequest) throws ExecutionException, InterruptedException {
+
+        String discountCode = null;
+
+        if (discountRawRequest.discountType == DiscountType.ByItemType){
+            DiscByItemType discByItemType = new DiscByItemType();
+            discByItemType.code = discountRawRequest.code;
+            discByItemType.rate = discountRawRequest.rate;
+            discByItemType.discountType = DiscountType.ByItemType;
+
+            if (discountRawRequest.itemType != null) {
+                discByItemType.itemType = discountRawRequest.itemType;
+
+                discountCode = createNewDiscount(discByItemType).code;
+            }
+        } else if (discountRawRequest.discountType == DiscountType.ByTotalCost) {
+            DiscByTotalCost discByTotalCost = new DiscByTotalCost();
+            discByTotalCost.code = discountRawRequest.code;
+            discByTotalCost.rate = discountRawRequest.rate;
+            discByTotalCost.discountType = DiscountType.ByTotalCost;
+
+            if (discountRawRequest.applyAfterCost != 0) {
+                discByTotalCost.applyAfterCost = discountRawRequest.applyAfterCost;
+
+                discountCode = createNewDiscount(discByTotalCost).code;
+
+            }
+        } else if (discountRawRequest.discountType == DiscountType.ByCountOfItems) {
+            DiscByCountOfItem discByCountOfItem = new DiscByCountOfItem();
+            discByCountOfItem.code = discountRawRequest.code;
+            discByCountOfItem.rate = discountRawRequest.rate;
+            discByCountOfItem.discountType = discountRawRequest.discountType;
+
+            if (discountRawRequest.itemId != null && discountRawRequest.itemCount != 0){
+                discByCountOfItem.itemId = discountRawRequest.itemId;
+                discByCountOfItem.itemCount = discountRawRequest.itemCount;
+
+                discountCode = createNewDiscount(discByCountOfItem).code;
+            }
+        }
+
+        return discountCode;
+    }
+    private Discount createNewDiscount(Discount discount) throws ExecutionException, InterruptedException {
         Firestore firestore = FirestoreClient.getFirestore();
 
         ApiFuture<WriteResult> savedResult = firestore.collection("discounts")

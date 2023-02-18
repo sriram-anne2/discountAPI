@@ -1,17 +1,18 @@
 package com.codeproject.discountAPI.domain;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 @Component
 @Getter
 @Setter
-@NoArgsConstructor
-public class Discount {
+public class DiscountRawRequest {
     public String code;
     public double rate;
     public DiscountType discountType;
+    public ItemType itemType;
+    public String itemId;
+    public int itemCount;
+    public double applyAfterCost;
 }
-
