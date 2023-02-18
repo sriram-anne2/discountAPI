@@ -9,6 +9,6 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 @NoArgsConstructor
-public class DiscByTotalCost extends Discount{
+public class DiscByTotalCost {
     public double applyAfterCost;
 }

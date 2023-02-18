@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 @NoArgsConstructor
-public class DiscByCountOfItem extends Discount {
+public class DiscByCountOfItem {
     public String itemId;
     public int itemCount;
 }

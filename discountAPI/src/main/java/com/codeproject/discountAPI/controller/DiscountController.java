@@ -1,6 +1,6 @@
 package com.codeproject.discountAPI.controller;
 
-import com.codeproject.discountAPI.domain.DiscountRawRequest;
+import com.codeproject.discountAPI.domain.Discount;
 import com.codeproject.discountAPI.domain.DiscountResponse;
 import com.codeproject.discountAPI.domain.ItemRequest;
 import com.codeproject.discountAPI.service.DiscountService;
@@ -19,19 +19,19 @@ public class DiscountController {
     DiscountService discountService;
 
     @GetMapping("")
-    public ArrayList<Object> getAllDiscounts() throws ExecutionException, InterruptedException {
+    public ArrayList<Discount> getAllDiscounts() throws ExecutionException, InterruptedException {
 
-        return discountService.getAllDiscountViews();
+        return discountService.getAllDiscounts();
     }
 
     @PostMapping("")
-    public String addNewDiscount(@RequestBody DiscountRawRequest discountRawRequest) throws ExecutionException, InterruptedException {
+    public Discount addNewDiscount(@RequestBody Discount discount) throws ExecutionException, InterruptedException {
 
-        return discountService.addDiscount(discountRawRequest);
+        return discountService.createNewDiscount(discount);
     }
 
     @GetMapping("/code")
-    public Object getDiscountByCode(@RequestHeader String discountCode) throws ExecutionException, InterruptedException {
+    public Discount getDiscountByCode(@RequestHeader String discountCode) throws ExecutionException, InterruptedException {
 
         return discountService.getDiscountByCode(discountCode);
     }
@@ -45,7 +45,7 @@ public class DiscountController {
     @GetMapping("/best")
     public DiscountResponse calculateBestDiscount(@RequestBody ArrayList<ItemRequest> itemRequests) throws ExecutionException, InterruptedException {
 
-        return discountService.calculateBestDiscount(itemRequests);
+        return new DiscountResponse();
     }
 
 }
