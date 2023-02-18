@@ -11,8 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 @Service
@@ -66,6 +65,61 @@ public class DiscountService {
         firestore.collection("discounts").document(discountCode).delete();
     }
 
+    public DiscountResponse calculateBestDiscount(ArrayList<ItemRequest> itemRequests) throws ExecutionException, InterruptedException {
+
+        ArrayList<Discount> discounts = getAllDiscounts();
+
+        HashMap<String, Double> discMapper = new HashMap<String, Double>();
+        String bestDiscountCode = null;
+        for (Discount discount : discounts){
+
+            double bestPriceForItem = 0;
+            double finalBill = 0;
+            for (ItemRequest itr : itemRequests){
+                Item item = itemService.getItemById(itr.getItemId());
+                bestPriceForItem = item.cost;
+                if (discount.itemType != null && discount.itemType == item.itemType){
+                    double discountedPrice = item.cost * (100 - discount.rate) / 100;
+                    if (discountedPrice < bestPriceForItem) {
+                        bestPriceForItem = discountedPrice;
+                        bestDiscountCode = discount.code;
+                    }
+                } else if (discount.applyAfterCost != null && item.cost >= discount.applyAfterCost) {
+                    double discountedPrice = item.cost * (100 - discount.rate) / 100;
+                    if (discountedPrice < bestPriceForItem) {
+                        bestPriceForItem = discountedPrice;
+                        bestDiscountCode = discount.code;
+                    }
+                } else if (discount.itemId != null && discount.itemCount != null &&
+                        Objects.equals(item.id, discount.itemId) && itr.getItemQuantity() >= discount.itemCount) {
+                    double discountedPrice = item.cost * (100 - discount.rate) / 100;
+                    if (discountedPrice < bestPriceForItem) {
+                        bestPriceForItem = discountedPrice;
+                        bestDiscountCode = discount.code;
+                    }
+                } else {
+                    bestDiscountCode = "";
+                }
+
+                finalBill += bestPriceForItem * itr.itemQuantity;
+            }
+
+            discMapper.put(bestDiscountCode, finalBill);
+        }
+
+        Map.Entry<String, Double> min = null;
+        for (Map.Entry<String, Double> entry : discMapper.entrySet()){
+            if (min == null || min.getValue() > entry.getValue()){
+                min = entry;
+            }
+        }
+
+        DiscountResponse discountResponse = new DiscountResponse();
+        discountResponse.discountCode = min.getKey();
+        discountResponse.finalCost = min.getValue();
+
+        return discountResponse;
+    }
 
 
     // OLD CODE

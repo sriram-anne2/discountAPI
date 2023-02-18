@@ -45,7 +45,7 @@ public class DiscountController {
     @GetMapping("/best")
     public DiscountResponse calculateBestDiscount(@RequestBody ArrayList<ItemRequest> itemRequests) throws ExecutionException, InterruptedException {
 
-        return new DiscountResponse();
+        return discountService.calculateBestDiscount(itemRequests);
     }
 
 }
