@@ -19,7 +19,7 @@ public class DiscountApiApplication {
 
 		Item item = new Item();
 		item.cost = 25;
-		item.id = "tesrt1";
+		item.id = "test1";
 		item.itemType = ItemType.Clothes;
 
 		itemService.addNewItem(item);
@@ -34,10 +34,10 @@ public class DiscountApiApplication {
 		discByCountOfItem.code = "DiscCountItem1";
 		discByCountOfItem.rate = 23;
 		discByCountOfItem.itemCount = 5;
-		discByCountOfItem.itemId = "tesrt1";
+		discByCountOfItem.itemId = "test1";
 
 		DiscByTotalCost discByTotalCost = new DiscByTotalCost();
-		discByTotalCost.code = "DiscTOtalCost1";
+		discByTotalCost.code = "DiscTotalCost1";
 		discByTotalCost.rate = 20;
 		discByTotalCost.applyAfterCost = 80;
 
