@@ -1,6 +1,8 @@
 package com.codeproject.discountAPI.controller;
 
 import com.codeproject.discountAPI.domain.DiscountRawRequest;
+import com.codeproject.discountAPI.domain.DiscountResponse;
+import com.codeproject.discountAPI.domain.ItemRequest;
 import com.codeproject.discountAPI.service.DiscountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +40,12 @@ public class DiscountController {
     public void deleteDiscountByCode(@RequestHeader String discountCode){
 
         discountService.deleteDiscount(discountCode);
+    }
+
+    @GetMapping("/best")
+    public DiscountResponse calculateBestDiscount(@RequestBody ArrayList<ItemRequest> itemRequests) throws ExecutionException, InterruptedException {
+
+        return discountService.calculateBestDiscount(itemRequests);
     }
 
 }
