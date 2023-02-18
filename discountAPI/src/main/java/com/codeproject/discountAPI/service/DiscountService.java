@@ -73,7 +73,7 @@ public class DiscountService {
         String bestDiscountCode = null;
         for (Discount discount : discounts){
 
-            double bestPriceForItem = 0;
+            double bestPriceForItem;
             double finalBill = 0;
             for (ItemRequest itr : itemRequests){
                 Item item = itemService.getItemById(itr.getItemId());

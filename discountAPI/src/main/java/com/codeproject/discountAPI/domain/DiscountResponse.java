@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 public class DiscountResponse {
-
     public String discountCode;
     public double finalCost;
 }
