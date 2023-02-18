@@ -12,4 +12,6 @@ import org.springframework.stereotype.Component;
 public class Discount {
     public String code;
     public double rate;
+
+    public DiscountType discountType;
 }
