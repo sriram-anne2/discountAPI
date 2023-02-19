@@ -1,6 +1,7 @@
 package com.codeproject.discountAPI.controller;
 
 import com.codeproject.discountAPI.domain.Item;
+import com.codeproject.discountAPI.exception.DiscountAPIException;
 import com.codeproject.discountAPI.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +17,9 @@ public class ItemController {
     ItemService itemService;
 
     @PostMapping("")
-    public String createNewItem(@RequestBody Item item) throws ExecutionException, InterruptedException {
+    public Item createNewItem(@RequestBody Item item) throws ExecutionException, InterruptedException {
 
-        return itemService.createNewItem(item).id;
+        return itemService.createNewItem(item);
     }
 
     @GetMapping("")
@@ -28,8 +29,13 @@ public class ItemController {
     }
 
     @GetMapping("/id")
-    public Item getItemById(@RequestHeader String itemId) throws ExecutionException, InterruptedException {
+    public Item getItemById(@RequestHeader String itemId) throws ExecutionException, InterruptedException, DiscountAPIException {
 
-        return itemService.getItemById(itemId);
+        Item item = itemService.getItemById(itemId);
+
+        if (item == null) {
+            throw new DiscountAPIException("Unable to find item");
+        }
+        return item;
     }
 }

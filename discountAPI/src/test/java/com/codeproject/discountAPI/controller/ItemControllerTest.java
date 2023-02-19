@@ -36,7 +36,7 @@ class ItemControllerTest {
         item.cost = 50;
         item.itemType = ItemType.Clothes;
 
-        given(itemController.createNewItem(item)).willReturn(item.id);
+        given(itemController.createNewItem(item)).willReturn(item);
 
         mockMvc.perform(MockMvcRequestBuilders.
                         post("/item").

@@ -1,6 +1,7 @@
 package com.codeproject.discountAPI.service;
 
 import com.codeproject.discountAPI.domain.*;
+import com.codeproject.discountAPI.exception.DiscountAPIException;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
@@ -65,18 +66,26 @@ public class DiscountService {
         firestore.collection("discounts").document(discountCode).delete();
     }
 
-    public DiscountResponse calculateBestDiscount(ArrayList<ItemRequest> itemRequests) throws ExecutionException, InterruptedException {
+    public DiscountResponse calculateBestDiscount(ArrayList<ItemRequest> itemRequests) throws ExecutionException, InterruptedException, DiscountAPIException {
 
         ArrayList<Discount> discounts = getAllDiscounts();
 
         HashMap<String, Double> discMapper = new HashMap<String, Double>();
         String bestDiscountCode = null;
+
+        if (discounts.size() == 0){
+            throw new DiscountAPIException("No discounts available");
+        }
         for (Discount discount : discounts){
 
             double bestPriceForItem;
             double finalBill = 0;
             for (ItemRequest itr : itemRequests){
                 Item item = itemService.getItemById(itr.getItemId());
+
+                if (item == null){
+                    throw new DiscountAPIException("Unable to find item with item id");
+                }
                 bestPriceForItem = item.cost;
                 if (discount.itemType != null && discount.itemType == item.itemType){
                     double discountedPrice = item.cost * (100 - discount.rate) / 100;
@@ -107,6 +116,9 @@ public class DiscountService {
             discMapper.put(bestDiscountCode, finalBill);
         }
 
+//        if (discMapper.size() == 0) {
+//            throw new DiscountAPIException("Unable to find best discount");
+//        }
         Map.Entry<String, Double> min = null;
         for (Map.Entry<String, Double> entry : discMapper.entrySet()){
             if (min == null || min.getValue() > entry.getValue()){
